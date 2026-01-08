@@ -122,7 +122,11 @@ this link can resize images for icons:
 
 https://ezgif.com/resize
 
+this is an image
 
+<img src="https://sligo-janala.github.io/oia.gif" alt="oiia cat"
+     width="150"
+     style="display:block; margin:auto;">
 
 Add at start for main stuff:
 
