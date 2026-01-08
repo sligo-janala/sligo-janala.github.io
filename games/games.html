@@ -12,18 +12,46 @@ body {
 <meta charset="utf-8">
 
   <!-- Open Graph (link preview) -->
-  <meta property="og:title" content="The Janala Bros' Website">
-  <meta property="og:description" content="The Janala Bros' Website Made By Milo">
-  <meta property="og:image" content="favicon">
-  <meta property="og:url" content="https://sligo-janala.github.io">
+  <meta property="og:title" content="The Janala Bros' Gamehub">
+  <meta property="og:description" content="Games For Days!">
+  <meta property="og:image" content="https://sligo-janala.github.io/images/sligo.png">
+  <meta property="og:url" content="https://sligo-janala.github.io/games/games.html">
   <meta property="og:type" content="website">
 
   <!-- Optional but recommended -->
-  <meta name="theme-color" content="#ff0000">
-<title>Janala Bros' Homepage</title>
-<link rel="icon" type="image/png" href="favicon.png">
+  <meta name="theme-color" content="#00ff00">
+<title>Janala Bros' Gamehub</title>
+<link rel="icon" type="image/png" href="https://sligo-janala.github.io/images/sligoico.png">
 </head>
 <meta name="color-scheme" content="light dark" />
 <a href="https://sligo-janala.github.io" style="text-decoration:none; font-size: 175%;">Back</a>
 <div style="text-align: center;">
   <h1>Welcome to the Janala Gamehub!</h1>
+<br><br>
+<div id="link-section">
+  <a href="https://orteil.dashnet.org/cookieclicker/" style="text-decoration:none; font-size: 175%;">Cookie Clicker</a>
+</div>
+<script>
+  document.querySelectorAll("#link-section a").forEach(link => {
+    if (link.querySelector("img")) return;
+
+    let domain;
+    try {
+      domain = new URL(link.href).origin;
+    } catch {
+      return;
+    }
+
+    const icon = document.createElement("img");
+    icon.src = `https://www.google.com/s2/favicons?sz=32&domain_url=${domain}`;
+    icon.alt = "favicon";
+    icon.style.width = "1em";          // width of icon
+    icon.style.height = "1em";         // height of icon
+    icon.style.verticalAlign = "middle";
+    icon.style.marginTop = "-.4em";
+    icon.style.marginRight = "6px";
+    icon.style.borderRadius = "25%";
+
+    link.prepend(icon);
+  });
+</script>
