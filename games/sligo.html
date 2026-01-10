@@ -12,14 +12,15 @@ body {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 90vw;             /* scale with viewport width */
-    height: auto;
+    height: 90vh;              /* scale based on viewport height */
+    width: auto;               /* width adjusts automatically to maintain aspect ratio */
+    max-width: 100vw;          /* optional: never exceed screen width */
   }
 
   .embed-container iframe {
-    width: 100%;
-    height: auto;            /* scale height automatically */
-    aspect-ratio: 485 / 402; /* maintain original aspect ratio */
+    height: 100%;              /* fill container height */
+    width: auto;               /* scale width automatically */
+    aspect-ratio: 485 / 402;   /* maintain original aspect ratio */
     display: block;
     border: 0;
   }
