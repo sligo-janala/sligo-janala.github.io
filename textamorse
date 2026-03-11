@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="color-scheme" content="light dark"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
+
+<title>Text ↔ Morse Code Converter</title>
+
+<style>
+*{box-sizing:border-box;}
+
+body{
+font-family:'Comic Relief',sans-serif;
+margin:24px;
+line-height:1.35;
+}
+
+.topbar{margin-bottom:8px;}
+
+h1{margin:12px 0 16px;}
+
+.grid{
+display:grid;
+gap:16px;
+grid-template-columns:1fr;
+}
+
+@media (min-width:900px){
+.grid{grid-template-columns:1fr 1fr;}
+}
+
+section{
+min-width:0;
+padding:14px;
+border-radius:14px;
+border:1px solid color-mix(in oklab, CanvasText 18%, Canvas 82%);
+background:Canvas;
+}
+
+.row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+align-items:center;
+margin-bottom:6px;
+}
+
+.muted{
+opacity:.7;
+font-size:13px;
+}
+
+textarea{
+width:100%;
+min-height:220px;
+padding:12px;
+font:14px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;
+border-radius:10px;
+border:1px solid color-mix(in oklab, CanvasText 22%, Canvas 78%);
+background:Canvas;
+color:CanvasText;
+resize:vertical;
+}
+
+textarea:focus{
+outline:none;
+border-color:color-mix(in oklab, CanvasText 45%, Canvas 55%);
+}
+
+button{
+padding:7px 12px;
+border-radius:8px;
+border:1px solid color-mix(in oklab, CanvasText 22%, Canvas 78%);
+background:color-mix(in oklab, CanvasText 8%, Canvas 92%);
+color:CanvasText;
+cursor:pointer;
+font-size:14px;
+}
+
+button:hover{
+background:color-mix(in oklab, CanvasText 12%, Canvas 88%);
+}
+
+#status{
+font-size:13px;
+opacity:.8;
+margin-top:10px;
+min-height:1.2em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<a href="https://beatystupid.github.io" style="text-decoration:none;font-size:175%;">Back</a>
+</div>
+
+<h1>Text ↔ Morse Code Converter</h1>
+
+<div class="grid">
+
+<!-- TEXT -->
+<section>
+<div class="row">
+<strong>Text</strong>
+<span class="muted" id="textCount">0 chars</span>
+<button id="copyText">Copy</button>
+<button id="clearText">Clear</button>
+</div>
+
+<textarea id="textInput" placeholder="Type something to translate..."></textarea>
+</section>
+
+<!-- MORSE -->
+<section>
+<div class="row">
+<strong>Morse Code</strong>
+<span class="muted" id="morseCount">0 symbols</span>
+<button id="copyMorse">Copy</button>
+<button id="clearMorse">Clear</button>
+</div>
+
+<textarea id="morseInput" placeholder="Type . - or /"></textarea>
+
+<div class="muted">/ = next letter • // = next word</div>
+</section>
+
+</div>
+
+<div id="status"></div>
+
+<script>
+const $ = id => document.getElementById(id)
+
+const textInput = $("textInput")
+const morseInput = $("morseInput")
+const textCount = $("textCount")
+const morseCount = $("morseCount")
+const statusEl = $("status")
+
+let activeSide = null
+
+const MORSE = {
+A:".-",B:"-...",C:"-.-.",D:"-..",E:".",
+F:"..-.",G:"--.",H:"....",I:"..",J:".---",
+K:"-.-",L:".-..",M:"--",N:"-.",O:"---",
+P:".--.",Q:"--.-",R:".-.",S:"...",T:"-",
+U:"..-",V:"...-",W:".--",X:"-..-",Y:"-.--",
+Z:"--..",
+0:"-----",1:".----",2:"..---",3:"...--",
+4:"....-",5:".....",6:"-....",7:"--...",
+8:"---..",9:"----."
+}
+
+const MORSE_REVERSE = Object.fromEntries(
+Object.entries(MORSE).map(([k,v])=>[v,k])
+)
+
+function updateCounts(){
+textCount.textContent = `${textInput.value.length} chars`
+morseCount.textContent = `${morseInput.value.length} symbols`
+}
+
+function textToMorse(str){
+return str.toUpperCase()
+.split(" ")
+.map(word =>
+word.split("")
+.map(c => MORSE[c] || "")
+.join("/")
+)
+.join("//")
+}
+
+function morseToText(code){
+if(!code.trim()) return ""
+
+return code.split("//").map(word=>
+word.split("/").map(letter=>
+MORSE_REVERSE[letter] || ""
+).join("")
+).join(" ")
+}
+
+textInput.addEventListener("input",()=>{
+if(activeSide==="morse") return
+activeSide="text"
+
+morseInput.value = textToMorse(textInput.value)
+
+updateCounts()
+statusEl.textContent="Live: text → morse"
+activeSide=null
+})
+
+morseInput.addEventListener("input",()=>{
+
+morseInput.value = morseInput.value.replace(/[^.\-\/\s]/g,"")
+
+if(activeSide==="text") return
+activeSide="morse"
+
+textInput.value = morseToText(morseInput.value)
+
+updateCounts()
+statusEl.textContent="Live: morse → text"
+activeSide=null
+})
+
+$("copyText").onclick = ()=>navigator.clipboard.writeText(textInput.value)
+$("copyMorse").onclick = ()=>navigator.clipboard.writeText(morseInput.value)
+
+$("clearText").onclick = ()=>{
+textInput.value=""
+morseInput.value=""
+updateCounts()
+}
+
+$("clearMorse").onclick = ()=>{
+morseInput.value=""
+textInput.value=""
+updateCounts()
+}
+
+updateCounts()
+</script>
+
+</body>
+</html>
